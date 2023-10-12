@@ -5,62 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homework 10</title>
     <style>
-      /* Dodane style */
       .cat-info {
         margin-top: 20px;
         padding: 20px;
         margin-left: auto;
         margin-right: auto;
-        display: flex; 
-        justify-content: space-between; 
-        align-items: start; 
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
       }
 
-      .loader.hidden {
-        display: none; 
-      }
-
-      .breed-select.hidden {
-        display: none; 
-      }
       .loader {
-        display: block;
-        position: relative;
-        height: 12px;
-        width: 80%;
-        border: 1px solid #fff;
-        border-radius: 10px;
-        overflow: hidden;
-      }
-      .loader:after {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        background: #ff3d00;
-        animation: 6s prog ease-in infinite;
+        display: none;
       }
 
-      @keyframes prog {
-        to {
-          width: 100%;
-        }
-      }
       .error {
-        border: 1px solid;
-        margin: 10px auto;
-        padding: 15px 10px 15px 50px;
-        background-repeat: no-repeat;
-        background-position: 10px center;
-        max-width: 460px;
-        color: #d8000c;
-        background-color: #ffbaba;
-        background-image: url('https://i.imgur.com/GnyDvKN.png');
-      }
-      .error.hidden {
-        display: none; 
+        display: none;
       }
     </style>
   </head>

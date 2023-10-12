@@ -26,3 +26,20 @@
   background-size: cover;
   background-position: center;
 }
+img {
+  display: block;
+  max-width: 49vw;
+  margin-top: 2vh;
+}
+
+.cat-info {
+  display: flex;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+  margin-top: 20vh;
+  margin-left: 5vw;
+}
