@@ -1,44 +1,35 @@
-'use strict';
-console.log('Starting script');
-import Notiflix from 'notiflix';
+console.log('Starting script'); //info w konsoli o starcie skryptu
+import Notiflix from 'notiflix'; // import biblioteki Notiflixa (obsługa komunikatów i stylów css)
 import 'notiflix/dist/notiflix-3.2.6.min.css';
-import axios from 'axios';
 
+import axios from 'axios'; // import axiosa - biblioteki do odbsługi żądań http
 axios.defaults.headers.common['x-api-key'] =
-  'live_RLoeys0vHayOo2VDWwg9jeHzh624VVed6uGnA8o4sjxQaMUNFqj1BUt7hH11fvN4';
+  'live_gQPE7aYHC2JxC4HJyzOTAX1mVK6khrVWlpVjNkVhfmBPwZbTUygmmJXQmL0FI4FQ';
 
-function fetchBreeds() {
-  console.log('fetchBreeds called');
+function fetchBreeds(callback) {
+  // deklaracja funkcji do obsługi danych z API
   return axios
-    .get('https://api.thecatapi.com/v1/breeds')
+    .get('https://api.thecatapi.com/v1/breeds') // wysłanie żądania aby pobrać dane z API o rasach kotów
     .then(response => {
-      console.log('axios get completed', response.data);
-      return response.data;
+      // jak żądanie będzie z sukcesem to odpowiedź ma być przetworzona
+      return response.data; // zawracane dane o rasach kotów
     })
+
     .catch(error => {
-      console.log('fetchBreeds error', error.response);
-      Notiflix.Loading.remove(); // End the loading state
-      Notiflix.Notify.failure(
-        'Oops! Something went wrong! Try reloading the page!'
-      );
-      //   throw error;
+      // obsługa błędu
+      console.log('fetchBreeds error', error.response); // wyświetlenie błędu w konsoli
+      return Promise.reject(error); // odrzucenie promisa z błedem
     });
 }
 
-function fetchCatByBreed(breedId) {
-  console.log('displayCatInfo', breedId);
-  console.log(`Fetching cat for breed: ${breedId}`);
+function fetchCatByBreed(breedId, callback) {
+  // delaracja funkcji do ściągania obrazków kotów
   return axios
-    .get(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`)
-    .then(response => response.data[0])
+    .get(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`) // wysłanie żądania get  aby pobrać z API danego kota
+    .then(response => response.data[0]) // przetwarzanie tego żądania  - pobranie pierwszego obrazu
     .catch(error => {
-      console.log('fetchBreeds error', error.response);
-      Notiflix.Loading.remove(); // End the loading state
-      Notiflix.Notify.failure(
-        'Oops! Something went wrong! Try reloading the page!'
-      );
-      //   throw error;
+      console.log('fetchCatByBreed error', error.response); // obsługa błędu , podobnie
+      return Promise.reject(error);
     });
 }
-
 export { fetchBreeds, fetchCatByBreed };
