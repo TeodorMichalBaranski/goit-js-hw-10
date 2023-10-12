@@ -1,81 +1,78 @@
-import { fetchBreeds } from './cat-api.js';
-import { fetchCatByBreed } from './cat-api.js';
+'use strict';
+console.log('Starting script');
 
-const loader = document.querySelector('.loader');
-const error = document.querySelector('.error');
-const select = document.querySelector('.breed-select');
+import SlimSelect from 'slim-select';
+import 'slim-select/dist/slimselect.css';
+import Notiflix from 'notiflix';
+import 'notiflix/dist/notiflix-3.2.6.min.css';
+import { fetchBreeds, fetchCatByBreed } from './cat-api';
+
 const catInfo = document.querySelector('.cat-info');
-let options = [];
+console.log('Cat info:', catInfo);
+let select;
+Notiflix.Loading.standard('Loading...', {
+  backgroundColor: 'rgba(0,0,0,0.8)',
+});
 
-window.addEventListener('load', () => {
-  loader.classList.remove('hidden');
-
-  select.style.display = 'none';
-  error.classList.add('hidden');
+window.onload = () => {
+  console.log('Window loaded');
+  Notiflix.Loading.standard('Loading data, please wait...', {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+  });
   fetchBreeds()
-    .then(catsList => {
-      loader.classList.add('hidden');
-
-      select.style.display = 'block';
-
-      catsList.forEach(e => {
-        const option = document.createElement('option');
-        option.setAttribute('value', `${e.id}`);
-        option.textContent = `${e.name}`;
-        options.push(option);
+    .then(breeds => {
+      Notiflix.Loading.remove();
+      const breedSelect = document.querySelector('.breed-select');
+      select = new SlimSelect({
+        select: breedSelect,
+        data: breeds.map(breed => ({
+          text: breed.name,
+          value: breed.id,
+        })),
       });
-      select.append(...options);
+      breedSelect.addEventListener('change', event => {
+        console.log('onChange event', event);
+        console.log('onChange event - selected value', event.target.value);
+        displayCatInfo(event.target.value);
+      });
+      console.log('SlimSelect initialized: ', select);
+      console.log('SlimSelect data: ', select.data.getData());
     })
-    .catch(err => {
-      // Obsługa błędów
-      loader.classList.add('hidden'); // Ukryj loader
-      error.classList.remove('hidden'); // Wyświetl komunikat o błędzie
-      console.error('Wystąpił błąd:', err); // Opcjonalnie: wypisz błąd do konsoli
+    .catch(error => {
+      Notiflix.Loading.remove();
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
     });
-});
+};
 
-select.addEventListener('change', e => {
-  // Pokaż animację ładowania
-  loader.classList.remove('hidden');
-  // Ukryj informacje o kocie
-  catInfo.style.display = 'none';
-
-  const currentValue = e.currentTarget.value;
-  catInfo.replaceChildren();
-
-  fetchCatByBreed(currentValue)
-    .then(catUrl => {
-      //loader.style.display = 'none';
-      loader.classList.add('hidden');
-
-      catInfo.style.display = 'flex'; //tutaj zmiana wyswietlania
-
-      const catImage = document.createElement('img');
-      catInfo.append(catImage);
-      catImage.setAttribute('src', `${catUrl}`);
-      catImage.setAttribute('width', '500');
-      catImage.setAttribute('height', '500');
+function displayCatInfo(breedId) {
+  console.log('About to fetch cat by breed');
+  console.log('displayCatInfo', breedId);
+  Notiflix.Loading.standard('Loading data, please wait...', {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+  });
+  fetchCatByBreed(breedId)
+    .then(cat => {
+      console.log('Fetched cat info', cat);
+      Notiflix.Loading.remove();
+      console.log(cat);
+      catInfo.innerHTML = `
+                <img src="${cat.url}" alt="${cat.breeds[0].name}">
+                
+    <div class="description">
+        <h2>${cat.breeds[0].name}</h2>
+        <p>${cat.breeds[0].description}</p>
+        <p>${cat.breeds[0].temperament}</p>
+    </div>
+            `;
+      console.log(catInfo);
     })
-    .then(
-      fetch(
-        'https://api.thecatapi.com/v1/breeds?api_key=live_e5uNK38D2LdYvYq9jrw7OoTkULXjhFXHcTTTLfhQCmB8zyjET14WEzbSaUbxwzC4'
-      )
-        .then(response => response.json())
-        .then(data => {
-          data.forEach(cat => {
-            if (currentValue === cat.id) {
-              const textContainer = document.createElement('div');
-              textContainer.classList.add('text-container');
-              const catName = document.createElement('h1');
-              const catDescr = document.createElement('p');
-              const catTemp = document.createElement('span');
-              textContainer.append(catName, catDescr, catTemp);
-              catInfo.append(textContainer);
-              catName.textContent = `${cat.name}`;
-              catDescr.textContent = `${cat.description}`;
-              catTemp.textContent = `Temperament: ${cat.temperament}`;
-            }
-          });
-        })
-    );
-});
+    .catch(error => {
+      console.log(error.response);
+      Notiflix.Loading.remove();
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+    });
+}

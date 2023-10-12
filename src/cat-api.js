@@ -1,35 +1,44 @@
+'use strict';
+console.log('Starting script');
+import Notiflix from 'notiflix';
+import 'notiflix/dist/notiflix-3.2.6.min.css';
 import axios from 'axios';
 
-
-
 axios.defaults.headers.common['x-api-key'] =
-  'live_e5uNK38D2LdYvYq9jrw7OoTkULXjhFXHcTTTLfhQCmB8zyjET14WEzbSaUbxwzC4';
+  'live_RLoeys0vHayOo2VDWwg9jeHzh624VVed6uGnA8o4sjxQaMUNFqj1BUt7hH11fvN4';
 
-
-export function fetchBreeds() {
-  return new Promise((resolve, reject) => {
-    fetch(
-      'https://api.thecatapi.com/v1/breeds?api_key=live_e5uNK38D2LdYvYq9jrw7OoTkULXjhFXHcTTTLfhQCmB8zyjET14WEzbSaUbxwzC4'
-    )
-      .then(response => {
-        return response.json(); 
-      })
-      .then(data => resolve(data)) 
-      .catch(err => reject(err)); 
-  });
+function fetchBreeds() {
+  console.log('fetchBreeds called');
+  return axios
+    .get('https://api.thecatapi.com/v1/breeds')
+    .then(response => {
+      console.log('axios get completed', response.data);
+      return response.data;
+    })
+    .catch(error => {
+      console.log('fetchBreeds error', error.response);
+      Notiflix.Loading.remove(); // End the loading state
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+      //   throw error;
+    });
 }
 
-
-export function fetchCatByBreed(breedId) {
-  return new Promise((resolve, reject) => {
-    fetch(
-      `https://api.thecatapi.com/v1/images/search?breeds_ids=${breedId}&api_key=live_RLoeys0vHayOo2VDWwg9jeHzh624VVed6uGnA8o4sjxQaMUNFqj1BUt7hH11fvN4`
-    )
-      .then(response => response.json()) 
-      .then(catItem => {
-        const catUrl = catItem[0].url; 
-        resolve(catUrl); 
-      })
-      .catch(err => reject(err)); 
-  });
+function fetchCatByBreed(breedId) {
+  console.log('displayCatInfo', breedId);
+  console.log(`Fetching cat for breed: ${breedId}`);
+  return axios
+    .get(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`)
+    .then(response => response.data[0])
+    .catch(error => {
+      console.log('fetchBreeds error', error.response);
+      Notiflix.Loading.remove(); // End the loading state
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+      //   throw error;
+    });
 }
+
+export { fetchBreeds, fetchCatByBreed };
