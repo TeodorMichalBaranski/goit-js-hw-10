@@ -9,15 +9,12 @@ const catInfo = document.querySelector('.cat-info');
 let select;
 
 Notiflix.Loading.standard('Loading...', {
- 
-  backgroundColor: 'rgba(0,0,0,0.8)',
+  backgroundColor: 'rgba(2,2,2,0.8)',
 });
 
 window.addEventListener('DOMContentLoaded', () => {
- 
   Notiflix.Loading.standard('Loading data, please wait...', {
-   
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: 'rgba(2,2,2,0.8)',
   });
 
   select = new SlimSelect({
@@ -28,8 +25,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (selectedBreedId) {
           Notiflix.Loading.standard('Loading data, please wait...', {
-            
-            backgroundColor: 'rgba(0,0,0,0.8)',
+            backgroundColor: 'rgba(2,2,2,0.8)',
           });
           fetchCatByBreed(selectedBreedId)
             .then(Data => {
